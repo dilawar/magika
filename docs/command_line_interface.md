@@ -1,8 +1,13 @@
 # Command Line Interface Documentation
 
-Magika ships with a CLI (currently written in Python), but we do have bindings/libraries/APIs for automated workflows. See [here](./bindings.md) for the full list.
+Magika ships with a CLI, written in Rust.
+
+You can install it with pipx install magika, crate install magika, etc. (we also do have bindings/libraries/APIs for automated workflows. See [here](./bindings.md) for the full list.)
 
 Magika CLI takes one or more files as arguments, and a number of options.
+
+> [!CAUTION]
+> TODO: update this with the rust one.
 
 ```help
 $ magika -h

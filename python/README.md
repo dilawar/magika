@@ -1,8 +1,8 @@
 # Magika Python Package
 
-Magika is a novel AI powered file type detection tool that rely on the recent advance of deep learning to provide accurate detection. Under the hood, Magika employs a custom, highly optimized Keras model that only weighs about 1MB, and enables precise file identification within milliseconds, even when running on a single CPU.
+Magika is a novel AI powered file type detection tool that rely on the recent advance of deep learning to provide accurate detection. Under the hood, Magika employs a custom, highly optimized Keras model that only weighs a few MBs, and enables precise file identification within milliseconds, even when running on a single CPU.
 
-Use Magika as a command line client or in your Python code!
+Use Magika as a command line client or in your Python code! We also have bindings for others.
 
 Please check out Magika on GitHub for more information and documentation: [https://github.com/google/magika](https://github.com/google/magika).
 

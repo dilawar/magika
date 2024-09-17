@@ -8,6 +8,10 @@ Magika is available as `magika` on [PyPI](https://pypi.org/project/magika):
 $ pip install magika
 ```
 
+This module installs... TODO
+
+TODO: update the API docs.
+
 ## API documentation
 
 The `magika` modules define a `Magika` class that you can use for inference.

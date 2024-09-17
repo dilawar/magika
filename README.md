@@ -2,14 +2,16 @@
 
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/google/magika/badge)](https://securityscorecards.dev/viewer/?uri=github.com/google/magika) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8706/badge)](https://www.bestpractices.dev/en/projects/8706) ![CodeQL](https://github.com/ossf/scorecard/workflows/CodeQL/badge.svg?branch=main) [![codecov](https://codecov.io/gh/ossf/scorecard/branch/main/graph/badge.svg?token=PMJ6NAN9J3)](https://codecov.io/gh/ossf/scorecard)
 
+Magika is a novel AI powered file type detection tool that relies on the recent advance of deep learning to provide accurate detection. Under the hood, Magika employs a custom, highly optimized Keras model that only weighs about a few MBs, and enables precise file identification within milliseconds, even when running on a single CPU.
 
-Magika is a novel AI powered file type detection tool that relies on the recent advance of deep learning to provide accurate detection. Under the hood, Magika employs a custom, highly optimized Keras model that only weighs about 1MB, and enables precise file identification within milliseconds, even when running on a single CPU.
+> [! IMPORTANT]
+> We have just released new things! Read more [here](./NEWS.md).
 
-In an evaluation with over 1M files and over 100 content types (covering both binary and textual file formats), Magika achieves 99%+ precision and recall. Magika is used at scale to help improve Google users’ safety by routing Gmail, Drive, and Safe Browsing files to the proper security and content policy scanners.
+In an evaluation on over 200 content types (covering both binary and textual file formats), Magika achieves close to 99% precision and recall. Magika is used at scale to help improve Google users’ safety by routing Gmail, Drive, and Safe Browsing files to the proper security and content policy scanners, and it is integrated with VirusTotal.
 
+You can quickly try Magika by using our [web demo](https://google.github.io/magika/), which runs locally in your browser!
 
-You can try Magika without anything by using our [web demo](https://google.github.io/magika/), which runs locally in your browser!
-
+TODO: redo screenshot
 Here is an example of what Magika command line output look like:
 <p align="center">
     <img src="./assets/magika-screenshot.png" width="600">
@@ -20,18 +22,16 @@ For more context you can read our initial [announcement post on Google's OSS blo
 
 ## Highlights
 
-- Available as a Python command line, a Python API, and an experimental TFJS version (which powers our [web demo](https://google.github.io/magika/)).
-- Trained on a dataset of over 25M files across more than 100 content types.
-- On our evaluation, Magika achieves 99%+ average precision and recall, outperforming existing approaches.
-- More than 100 content types (see [full list](./docs/supported_content_types_list.md)).
-- After the model is loaded (this is a one-off overhead), the inference time is about 5ms per file.
-- Batching: You can pass to the command line and API multiple files at the same time, and Magika will use batching to speed up the inference time. You can invoke Magika with even thousands of files at the same time. You can also use `-r` for recursively scanning a directory.
+- Available as a command line (written in Rust), a Python API, a Rust API, and an experimental TFJS version (which powers our [web demo](https://google.github.io/magika/)).
+- Trained on a dataset of almost 100M files across more than 200 content types.
+- On our evaluation, Magika achieves close to 99% average precision and recall, outperforming existing approaches.
+- More than 200 content types (see [supported content types by our latest model](https://github.com/google/magika/assets/models/standard_v2_1/README.md)).
+- After the model is loaded (this is a one-off overhead), the inference time is about 5ms/10ms per file, depending on your environment.
+- You can invoke Magika with even thousands of files at the same time. You can also use `-r` for recursively scanning a directory.
 - Near-constant inference time independently from the file size; Magika only uses a limited subset of the file's bytes.
-- Magika uses a per-content-type threshold system that determines whether to "trust" the prediction for the model, or whether to return a generic label, such as "Generic text document" or "Unknown binary data".
+- Magika uses a per-content-type threshold system that determines whether to "trust" the prediction for the model, or whether to return a generic label, such as "Generic text document" or "Unknown binary data". No additional tuning is required.
 - Support three different prediction modes, which tweak the tolerance to errors: `high-confidence`, `medium-confidence`, and `best-guess`.
-- It's open source! (And more is yet to come.)
-
-For more details, see the documentation for the [python package](./docs/python.md) and for the [js package](./js/README.md) (dev [docs](./docs/js.md)).
+- The client and bindings are already open source! (And we are working on open sourcing the rest of the code base.)
 
 
 ## Table of Contents
@@ -39,8 +39,8 @@ For more details, see the documentation for the [python package](./docs/python.m
 1. [Getting Started](#getting-started)
     1. [Installation](#installation)
     1. [Running on Docker](#running-in-docker)
-    1. [Usage](#usage)
-        1. [Python command line](#python-command-line)
+    1. [Quick Examples](#quick-examples)
+        1. [Command line](#command-line)
         1. [Python API](#python-api)
         1. [Experimental TFJS model & npm package](#experimental-tfjs-model--npm-package)
 1. [Development Setup](#development-setup)
@@ -60,8 +60,12 @@ For more details, see the documentation for the [python package](./docs/python.m
 Magika is available as `magika` on PyPI:
 
 ```shell
-$ pip install magika
+$ pip install magika  # or pipx install magika
 ```
+
+This will install the `magika` python package, which ships the new CLI (written in Rust), and the `Magika` python module.
+
+TODO: add how to install from rust.
 
 ### Running in Docker
 
@@ -69,14 +73,18 @@ $ pip install magika
 git clone https://github.com/google/magika
 cd magika/
 docker build -t magika .
-docker run -it --rm -v $(pwd):/magika magika -r /magika/tests_data
+docker run -it --rm -v $(pwd):/magika magika -r /magika/tests_data/basic
 ```
 
-### Usage
+### Quick Examples
 
-#### Python command line
+#### Command Line
+
+The `magika` CLI is a self-contained binary written in rust.
 
 Examples:
+
+TODO: update examples.
 
 ```shell
 $ magika -r tests_data/
@@ -96,6 +104,8 @@ tests_data/mitra/elf.elf: ELF executable (executable)
 tests_data/mitra/flac.flac: FLAC audio bitstream data (audio)
 ...
 ```
+
+TODO: update examples.
 
 ```shell
 $ magika code.py --json
@@ -126,6 +136,8 @@ $ magika code.py --json
 $ cat doc.ini | magika -
 -: INI configuration file (text)
 ```
+
+TODO: update help
 
 ```help
 $ magika -h
@@ -171,10 +183,12 @@ Options:
   Send any feedback to magika-dev@google.com or via GitHub issues.
 ```
 
-See [python documentation](./docs/python.md) for detailed documentation.
+See [the cli docs](./docs/command_line_interface.md) for detailed documentation.
 
 
 #### Python API
+
+TODO: update
 
 Examples:
 
@@ -190,6 +204,9 @@ markdown
 See [python documentation](./docs/python.md) for detailed documentation.
 
 
+#### Rust bindings
+
+
 #### Experimental TFJS model & npm package
 
 We also provide Magika as an experimental package for people interested in using in a web app.
@@ -200,21 +217,13 @@ See [js documentation](./docs/js.md) for the details.
 
 ## Development Setup
 
-We use [poetry](https://python-poetry.org/) for development and packaging:
+We use [uv](https://docs.astral.sh/uv/) for development and packaging:
 
 ```shell
 $ git clone https://github.com/google/magika
 $ cd magika/python
-$ poetry shell && poetry install
-$ magika -r ../tests_data
-```
-
-To run the tests:
-
-```shell
-$ cd magika/python
-$ poetry shell
-$ pytest tests/
+$ uv sync  # install dependencies
+$ uv run magika -r ../tests_data/basic  # run some tests
 ```
 
 
@@ -222,7 +231,7 @@ $ pytest tests/
 
 - [Documentation about the CLI](./docs/command_line_interface.md)
 - [Documentation about the bindings for different languages](./docs/bindings.md)
-- [List of supported content types (for v1, more to come).](./docs/supported_content_types_list.md)
+- [List of supported content types by our latest model.](./assets/models/standard_v2_1/README.md)
 - [Documentation on how to interpret Magika's output.](./docs/magika_output.md)
 - [Frequently Asked Questions](./docs/faq.md)
 
@@ -236,9 +245,7 @@ We would also love to hear from the community about encountered problems, misdet
 
 Check our open GitHub issues to see what is on our roadmap and please report misdetections or feature requests by either opening GitHub issues (preferred) or by emailing us at magika-dev@google.com.
 
-When reporting misdetections, you may want to use `$ magika --generate-report <path>` to generate a report with debug information, which you can include in your github issue.
-
-**NOTE: Do NOT send reports about files that may contain PII, the report contains (a small) part of the file content!**
+**NOTE: Do NOT attach files that may contain PII!**
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for details.
 
@@ -263,8 +270,9 @@ title = {{Magika content-type scanner}},
 url = {https://github.com/google/magika}
 }
 ```
+
 ## Security vulnerabilities
-Please contact us directly at magika-dev@google.com 
+Please contact us directly at magika-dev@google.com
 
 ## License
 
