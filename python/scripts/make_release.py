@@ -18,7 +18,7 @@ def main(new_version: str) -> None:
     - create new branch
     - update `magika.__init__.__version__` with `new_version`
     - update `Unreleased` => `new_version` in `CHANGELOG.md` + add date
-    - git commit
+    - git commit with message "python: release {new_version}"
     - print next steps
 
     If the new version ends -dev, we just update the version in the main repo
