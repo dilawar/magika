@@ -17,7 +17,7 @@ def main(new_version: str) -> None:
     It does the following steps:
     - create new branch
     - update `magika.__init__.__version__` with `new_version`
-    - update `Unreleased` => `new_version` in `CHANGELOG.md`
+    - update `Unreleased` => `new_version` in `CHANGELOG.md` + add date
     - git commit
     - print next steps
 
